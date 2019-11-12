@@ -7,10 +7,21 @@ var items = {};
 
 // Public API - Fix these CRUD functions ///////////////////////////////////////
 
-exports.create = (text, callback) => {
-  var id = counter.getNextUniqueId();
-  items[id] = text;
-  callback(null, { id, text });
+exports.create = (text, callback) => { // callback = addToDo --> takes in a todo text and appends it
+  console.log(text);
+  counter.getNextUniqueId((err, id) => {
+    if (err) {
+      console.log(err);
+    } else {
+      fs.writeFile(`${exports.dataDir}/${id}.txt`, text, (err) => {
+        if (err) {
+          console.log(err);
+        } else {
+          callback(null, { id, text });
+        }
+      });
+    }
+  });
 };
 
 exports.readAll = (callback) => {
@@ -52,7 +63,7 @@ exports.delete = (id, callback) => {
 
 // Config+Initialization code -- DO NOT MODIFY /////////////////////////////////
 
-exports.dataDir = path.join(__dirname, 'data');
+exports.dataDir = path.join(__dirname, 'data'); // this gives us 'dirname/data' folder path
 
 exports.initialize = () => {
   if (!fs.existsSync(exports.dataDir)) {
