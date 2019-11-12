@@ -47,12 +47,34 @@ exports.readAll = (callback) => {
 };
 
 exports.readOne = (id, callback) => {
-  var text = items[id];
-  if (!text) {
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    callback(null, { id, text });
-  }
+  // iterate through file arr from readDir
+  // if fileName === id, then readfile
+
+  fs.readdir(exports.dataDir, (err, filesArr) => {
+    if (err) {
+      console.log(err);
+    } else {
+      filesArr.forEach((file) => {
+        var fileName = file.slice(0, (file.length - 4));
+        if (fileName === id) {
+          fs.readFile(`${exports.dataDir}/${file}`, (err, fileData) => {
+            if (err) {
+              console.log(err);
+            } else {
+              callback(null, { 'id': id, 'text': fileData});
+            }
+          });
+        }
+      });
+    }
+  });
+
+  // var text = items[id];
+  // if (!text) {
+  //   callback(new Error(`No item with id: ${id}`));
+  // } else {
+  //   callback(null, { id, text });
+  // }
 };
 
 exports.update = (id, text, callback) => {
