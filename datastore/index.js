@@ -8,7 +8,6 @@ var items = {};
 // Public API - Fix these CRUD functions ///////////////////////////////////////
 
 exports.create = (text, callback) => { // callback = addToDo --> takes in a todo text and appends it
-  console.log(text);
   counter.getNextUniqueId((err, id) => {
     if (err) {
       console.log(err);
@@ -25,10 +24,26 @@ exports.create = (text, callback) => { // callback = addToDo --> takes in a todo
 };
 
 exports.readAll = (callback) => {
-  var data = _.map(items, (text, id) => {
-    return { id, text };
+  // var data = _.map(items, (text, id) => {
+  //   return { id, text };
+  // });
+  // go through each file in dataDir
+  // put their id/text info in an obj
+  // push that obj into an array
+  // callback(null, array)
+  var data = [];
+  fs.readdir(exports.dataDir, (err, filesArr) => {
+    if (err) {
+      console.log(err);
+    } else {
+      filesArr.forEach((file) => {
+        var fileName = file.slice(0, (file.length - 4));
+        data.push({ 'id': fileName, 'text': fileName});
+      });
+      callback(null, data);
+    }
   });
-  callback(null, data);
+
 };
 
 exports.readOne = (id, callback) => {
